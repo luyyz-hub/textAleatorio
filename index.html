@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livro Interativo - A Aventura do Dragão</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .book {
+            width: 800px;
+            height: 500px;
+            position: relative;
+            perspective: 1500px;
+            cursor: pointer;
+        }
+
+        .book-cover {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #d97706, #b45309);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transition: transform 0.8s;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .book-cover h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .book-cover h2 {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .page {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            background: white;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+            padding: 40px;
+            overflow: hidden;
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: left;
+        }
+
+        .page-left {
+            left: 0;
+            border-radius: 15px 0 0 15px;
+            transform-origin: left center;
+        }
+
+        .page-right {
+            right: 0;
+            border-radius: 0 15px 15px 0;
+            transform-origin: right center;
+        }
+
+        .page-content {
+            height: 100%;
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .page-number {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 0.9em;
+            color: #999;
+        }
+
+        .turn-left {
+            transform: rotateY(-180deg);
+            z-index: 10;
+        }
+
+        .turn-right {
+            transform: rotateY(180deg);
+            z-index: 10;
+        }
+
+        .hidden {
+            z-index: 1;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            background: #3730a3;
+            transform: translateY(-2px);
+        }
+
+        .dragon-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @media (max-width: 768px) {
+            .book {
+                width: 95vw;
+                height: 70vh;
+            }
+            
+            .page {
+                width: 48%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="book" id="book">
+        <!-- Capa -->
+        <div class="book-cover" id="cover">
+            <div class="dragon-icon">🐉</div>
+            <h1>A Aventura do Dragão</h1>
+            <h2>Uma história mágica</h2>
+        </div>
+
+        <!-- Páginas -->
+        <div class="page page-left hidden" data-page="1">
+            <div class="page-content">
+                <h2>Capítulo 1<br>A Floresta Encantada</h2>
+                <p>Era uma vez um pequeno dragão chamado Lumi. Ele vivia numa floresta mágica onde as árvores sussurravam segredos e as flores cantavam ao luar.</p>
+                <p>Lumi sonhava em descobrir o mundo além das montanhas, mas tinha medo de se aventurar sozinho...</p>
+            </div>
+            <div class="page-number">1</div>
+        </div>
+
+        <div class="page page-right hidden" data-page="2">
+            <div class="page-content">
+                <p>Numa manhã ensolarada, Lumi encontrou um mapa antigo escondido numa caverna. O mapa mostrava o caminho para a Montanha do Tesouro!</p>
+                <p>"Esta é a minha chance!", pensou o dragãozinho, com o coração batendo forte de empolgação.</p>
+            </div>
+            <div class="page-number">2</div>
+        </div>
+
+        <div class="page page-left hidden" data-page="3">
+            <div class="page-content">
+                <h2>Capítulo 2<br>O Rio Cantante</h2>
+                <p>No caminho, Lumi chegou a um rio que cantava melodias encantadoras. As águas dançavam e formavam arco-íris a cada onda.</p>
+                <p>Um peixe dourado apareceu e disse: "Para atravessar, você deve responder meu enigma!"</p>
+            </div>
+            <div class="page-number">3</div>
+        </div>
+
+        <div class="page page-right hidden" data-page="4">
+            <div class="page-content">
+                <p>"O que tem raiz que ninguém vê, é mais alto que as árvores, sobe e sobe, mas nunca cresce?"</p>
+                <p>Lumi pensou e respondeu: "A montanha!" O peixe sorriu e abriu caminho no rio.</p>
+            </div>
+            <div class="page-number">4</div>
+        </div>
+
+        <div class="page page-left hidden" data-page="5">
+            <div class="page-content">
+                <h2>Capítulo 3<br>O Grande Tesouro</h2>
+                <p>Finalmente, Lumi chegou à Montanha do Tesouro. No topo, encontrou uma caverna brilhante cheia de joias mágicas.</p>
+                <p>Mas o verdadeiro tesouro era um espelho que mostrava o valor do coração puro!</p>
+            </div>
+            <div class="page-number">5</div>
+        </div>
+
+        <div class="page page-right hidden" data-page="6">
+            <div class="page-content">
+                <h2>Fim</h2>
+                <p>Lumi voltou para casa mais sábio e corajoso. Aprendeu que as maiores aventuras estão dentro de nós mesmos.</p>
+                <p><em>"A coragem não é a falta de medo, mas a vitória sobre ele."</em></p>
+                <p style="text-align: center; margin-top: 30px; font-style: italic;">
+                    Fim da aventura ✨
+                </p>
+            </div>
+            <div class="page-number">6</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="previousPage()">← Anterior</button>
+        <button class="btn" onclick="nextPage()">Próxima →</button>
+        <button class="btn" onclick="resetBook()">Reiniciar</button>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        const totalPages = 6;
+        const pages = document.querySelectorAll('.page');
+        const cover = document.getElementById('cover');
+
+        function showPage(pageNum) {
+            // Esconde todas as páginas
+            pages.forEach(p => {
+                p.classList.add('hidden');
+                p.classList.remove('turn-left', 'turn-right');
+            });
+
+            if (pageNum === 0) {
+                // Mostra capa
+                cover.style.transform = 'rotateY(0deg)';
+                cover.style.zIndex = '100';
+            } else if (pageNum <= totalPages) {
+                // Esconde capa
+                cover.style.zIndex = '1';
+                
+                // Mostra páginas pares/impares
+                for (let i = 1; i <= totalPages; i++) {
+                    const page = document.querySelector(`[data-page="${i}"]`);
+                    if (i <= pageNum) {
+                        page.classList.remove('hidden');
+                        
+                        // Animação de virada
+                        if (i % 2 === 0) {
+                            page.classList.add('turn-right');
+                        } else {
+                            page.classList.add('turn-left');
+                        }
+                    }
+                }
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                showPage(currentPage);
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                showPage(currentPage);
+            }
+        }
+
+        function resetBook() {
+            currentPage = 0;
+            showPage(0);
+        }
+
+        // Clique na capa para começar
+        cover.addEventListener('click', () => {
+            if (currentPage === 0) {
+                nextPage();
+            }
+        });
+
+        // Controles por teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextPage();
+            } else if (e.key === 'ArrowLeft') {
+                previousPage();
+            } else if (e.key === 'Home') {
+                resetBook();
+            }
+        });
+
+        // Inicializa com capa
+        showPage(0);
+    </script>
+</body>
+</html>
